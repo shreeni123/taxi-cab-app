@@ -35,7 +35,7 @@ try {
 
   stage('Deploy on Dev') {
   	node('master'){
-    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"]){
+    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ECR_REPO_NAME}"]){
         	sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         	sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         	sh "sed -i 's|ENVIRONMENT|dev|g' k8s/*.yaml"
@@ -90,7 +90,7 @@ stage('Deploy on Prod') {
     node('master'){
     	if (userInput['DEPLOY_TO_PROD'] == true) {
     		echo "Deploying to Production..."       
-       		withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"]){
+       		withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config","IMAGE=${ECR_REPO_NAME}:latest"]){
         		sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         		sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         		sh "sed -i 's|dev|prod|g' k8s/*.yaml"
