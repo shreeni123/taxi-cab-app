@@ -26,7 +26,7 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-      
+      	    sh "docker login"
 	    sh "docker build -t shreeni123/${ECR_REPO_NAME} ."
             sh "docker push shreeni123/${ECR_REPO_NAME}:latest"
     }
