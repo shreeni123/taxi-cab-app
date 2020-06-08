@@ -26,7 +26,7 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-      sh "\$(aws ecr get-login --no-include-email --region us-east-2)"
+      sh "\$(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 692963223244.dkr.ecr.us-east-2.amazonaws.com)"
       GIT_COMMIT_ID = sh (
         script: 'git log -1 --pretty=%H',
         returnStdout: true
