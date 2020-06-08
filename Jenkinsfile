@@ -26,10 +26,9 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-      sh "\$(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com)"
-      sh "docker build -t java-app-ecr ."
-      sh "docker tag java-app-ecr:latest ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
-      sh "docker push ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
+      
+	    sh "docker build -t shreeni123/${ECR_REPO_NAME} ."
+            sh "docker push shreeni123/${ECR_REPO_NAME}:latest"
     }
   }
 
