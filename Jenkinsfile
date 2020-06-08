@@ -37,7 +37,7 @@ try {
       ).trim()
       echo "Git commit id: ${GIT_COMMIT_ID}"
       IMAGETAG="${GIT_COMMIT_ID}-${TIMESTAMP}"
-	  sh "docker build -t ${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG} ."
+	  sh "docker build -t ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG} ."
       sh "docker push ${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG}"
     }
   }
