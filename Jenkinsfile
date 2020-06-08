@@ -26,9 +26,10 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-	    sh "docker login --username ${DOCKER_USERNAME} -p ${DOCKER_PASSWD}"
+	    withDockerRegistry(credentialsId: 'docker') {
 	    sh "docker build -t shreeni123/${ECR_REPO_NAME} ."
             sh "docker push shreeni123/${ECR_REPO_NAME}:latest"
+	    }
     }
   }
 
