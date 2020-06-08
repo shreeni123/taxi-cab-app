@@ -35,10 +35,9 @@ try {
         script: 'date +%Y%m%d%H%M%S',
         returnStdout: true
       ).trim()
-      echo "Git commit id: ${GIT_COMMIT_ID}"
-      IMAGETAG="${GIT_COMMIT_ID}-${TIMESTAMP}"
-	  sh "docker build -t ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG} ."
-      sh "docker push ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG}"
+      	  sh "docker build -t java-app-ecr ."
+	    sh "docker tag java-app-ecr:latest ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
+      sh "docker push ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
     }
   }
 
