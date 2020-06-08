@@ -26,24 +26,16 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-      sh "\$(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 692963223244.dkr.ecr.us-east-2.amazonaws.com)"
-      GIT_COMMIT_ID = sh (
-        script: 'git log -1 --pretty=%H',
-        returnStdout: true
-      ).trim()
-      TIMESTAMP = sh (
-        script: 'date +%Y%m%d%H%M%S',
-        returnStdout: true
-      ).trim()
-      	  sh "docker build -t java-app-ecr ."
-	    sh "docker tag java-app-ecr:latest ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
+      sh "\$(aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com)"
+      sh "docker build -t java-app-ecr ."
+      sh "docker tag java-app-ecr:latest ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
       sh "docker push ${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"
     }
   }
 
   stage('Deploy on Dev') {
   	node('master'){
-    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG}"]){
+    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"]){
         	sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         	sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         	sh "sed -i 's|ENVIRONMENT|dev|g' k8s/*.yaml"
@@ -98,7 +90,7 @@ stage('Deploy on Prod') {
     node('master'){
     	if (userInput['DEPLOY_TO_PROD'] == true) {
     		echo "Deploying to Production..."       
-       		withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-1.amazonaws.com/${ECR_REPO_NAME}:${IMAGETAG}"]){
+       		withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config","IMAGE=${ACCOUNT}.dkr.ecr.us-east-2.amazonaws.com/${ECR_REPO_NAME}:latest"]){
         		sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         		sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         		sh "sed -i 's|dev|prod|g' k8s/*.yaml"
