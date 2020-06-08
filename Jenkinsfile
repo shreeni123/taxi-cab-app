@@ -26,7 +26,7 @@ try {
 
   stage('Build Docker Image') {
     node('master'){
-      	    sh "docker login --username $(echo $DOCKER_USERNAME) -p $(echo $DOCKER_PASSWD)"
+	    sh "docker login --username $(echo ${DOCKER_USERNAME}) -p $(echo ${DOCKER_PASSWD})"
 	    sh "docker build -t shreeni123/${ECR_REPO_NAME} ."
             sh "docker push shreeni123/${ECR_REPO_NAME}:latest"
     }
