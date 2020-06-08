@@ -4,9 +4,12 @@ metadata:
   name: taxicab-ENVIRONMENT-BUILD_NUMBER
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: taxicab
+      version: "BUILD_NUMBER"
   template:
     metadata:
-     selector: 
       labels:
         app: taxicab
         version: "BUILD_NUMBER"
