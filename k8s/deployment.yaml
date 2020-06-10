@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: taxicab-ENVIRONMENT-BUILD_NUMBER
-        image: IMAGE
+        image: shreeni123/IMAGE
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
