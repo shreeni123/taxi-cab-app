@@ -58,32 +58,14 @@ try {
         	).trim()
         	echo "Creating k8s resources..."
         	sleep 180
-        	DESIRED= sh (
-          		script: "kubectl get deployment/$DEPLOYMENT | awk '{print \$2}' | grep -v DESIRED",
-          		returnStdout: true
-         	).trim()
-        	CURRENT= sh (
-          		script: "kubectl get deployment/$DEPLOYMENT | awk '{print \$3}' | grep -v CURRENT",
-          		returnStdout: true
-         	).trim()
-        	if (DESIRED.equals(CURRENT)) {
-          		currentBuild.result = "SUCCESS"
-          		return
-        	} else {
-          		error("Deployment Unsuccessful.")
-          		currentBuild.result = "FAILURE"
-          		return
-        	}
+        	
 	}
       	}
     }
   }
 }
 
-catch (err){
-  currentBuild.result = "FAILURE"
-  throw err
-}
+
 
 def userInput
 try {
@@ -113,21 +95,7 @@ stage('Deploy on Prod') {
         		).trim()
         		echo "Creating k8s resources..."
         		sleep 180
-        		DESIRED= sh (
-          			script: "kubectl get deployment/$DEPLOYMENT | awk '{print \$2}' | grep -v DESIRED",
-          			returnStdout: true
-         		).trim()
-        		CURRENT= sh (
-          			script: "kubectl get deployment/$DEPLOYMENT | awk '{print \$3}' | grep -v CURRENT",
-          			returnStdout: true
-         		).trim()
-        		if (DESIRED.equals(CURRENT)) {
-          			currentBuild.result = "SUCCESS"
-        		} else {
-          			error("Deployment Unsuccessful.")
-          			currentBuild.result = "FAILURE"
-          			return
-        		}
+        		
       		}
     	}
 	else {
