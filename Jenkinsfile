@@ -27,8 +27,18 @@ try {
   stage('Build Docker Image') {
     node('master'){
 	    withDockerRegistry(credentialsId: 'docker') {
-	    sh "docker build -t shreeni123/${ECR_REPO_NAME} ."
-            sh "docker push shreeni123/${ECR_REPO_NAME}:latest"
+	    GIT_COMMIT_ID = sh (
+        	script: 'git log -1 --pretty=%H',
+        	returnStdout: true
+      	    ).trim()
+      	    TIMESTAMP = sh (
+        	script: 'date +%Y%m%d%H%M%S',
+        	returnStdout: true
+      	    ).trim()
+      	    echo "Git commit id: ${GIT_COMMIT_ID}"
+      	    IMAGETAG="${GIT_COMMIT_ID}-${TIMESTAMP}"
+		    sh "docker build -t shreeni123/${ECR_REPO_NAME}:${IMAGETAG} ."
+		    sh "docker push shreeni123/${ECR_REPO_NAME}:${IMAGETAG}"
 	    }
     }
   }
@@ -36,7 +46,7 @@ try {
   stage('Deploy on Dev') {
   	node('master'){
 		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ECR_REPO_NAME}"]){
+    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=shreeni123/${ECR_REPO_NAME}:${IMAGETAG}"]){
         	sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         	sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         	sh "sed -i 's|ENVIRONMENT|dev|g' k8s/*.yaml"
