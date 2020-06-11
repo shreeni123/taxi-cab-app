@@ -114,7 +114,8 @@ stage('Deploy on Prod') {
 stage('Validate Prod Green Env') {
   node('master'){
      if (userInput['PROD_BLUE_DEPLOYMENT'] == false) {
-    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config"]){
+    	withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+	     withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config"]){
         	GREEN_SVC_NAME = sh (
           		script: "yq .metadata.name k8s/service.yaml | tr -d '\"'",
           		returnStdout: true
@@ -135,6 +136,7 @@ stage('Validate Prod Green Env') {
           		echo "Application didnot pass the test case. Not Working"
           		currentBuild.result = "FAILURE"
         	}
+	     }
       	}
       }
     }
@@ -143,7 +145,8 @@ stage('Validate Prod Green Env') {
 stage('Patch Prod Blue Service') {
     node('master'){
       if (userInput['PROD_BLUE_DEPLOYMENT'] == false) {
-      	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config"]){
+      	withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+	      withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config"]){
         	BLUE_VERSION = sh (
             	script: "kubectl get svc/${PROD_BLUE_SERVICE} -o yaml | yq .spec.selector.version",
           	returnStdout: true
@@ -159,6 +162,7 @@ stage('Patch Prod Blue Service') {
           	sh "kubectl delete svc ${GREEN_SVC_NAME}"
           	sh "kubectl delete deployment ${BLUE_DEPLOYMENT_NAME}"
       	}
+	}
       }
     }
 }
