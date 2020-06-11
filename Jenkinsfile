@@ -46,7 +46,7 @@ try {
   stage('Deploy on Dev') {
   	node('master'){
 		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=shreeni123/${ECR_REPO_NAME}:${IMAGETAG}"]){
+    	withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/dev-config","IMAGE=${ECR_REPO_NAME}:${IMAGETAG}"]){
         	sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         	sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
         	sh "sed -i 's|ENVIRONMENT|dev|g' k8s/*.yaml"
