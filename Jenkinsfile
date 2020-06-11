@@ -87,7 +87,8 @@ catch (err) {
 stage('Deploy on Prod') {
     node('master'){
     	if (userInput['DEPLOY_TO_PROD'] == true) {
-    		echo "Deploying to Production..."       
+    		echo "Deploying to Production..."
+		withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
        		withEnv(["KUBECONFIG=${JENKINS_HOME}/.kube/prod-config","IMAGE=${ECR_REPO_NAME}:latest"]){
         		sh "sed -i 's|IMAGE|${IMAGE}|g' k8s/deployment.yaml"
         		sh "sed -i 's|ACCOUNT|${ACCOUNT}|g' k8s/service.yaml"
@@ -99,7 +100,7 @@ stage('Deploy on Prod') {
         		).trim()
         		echo "Creating k8s resources..."
         		sleep 180
-        		
+		}
       		}
     	}
 	else {
