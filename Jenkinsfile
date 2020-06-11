@@ -57,7 +57,7 @@ try {
           		returnStdout: true
         	).trim()
         	echo "Creating k8s resources..."
-        	sleep 180
+        	sleep 30
         	
 	}
       	}
