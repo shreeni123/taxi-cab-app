@@ -39,7 +39,7 @@ try {
       	    IMAGETAG="${GIT_COMMIT_ID}-${TIMESTAMP}"
 		    sh "docker build -t shreeni123/${ECR_REPO_NAME}:${IMAGETAG} ."
 		    sh "docker push shreeni123/${ECR_REPO_NAME}:${IMAGETAG}"
-	    }
+	    
     }
   }
 
